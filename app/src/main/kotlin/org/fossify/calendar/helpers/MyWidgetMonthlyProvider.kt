@@ -44,7 +44,7 @@ class MyWidgetMonthlyProvider : AppWidgetProvider() {
     private fun getComponentName(context: Context) = ComponentName(context, MyWidgetMonthlyProvider::class.java)
 
     private fun setupIntent(context: Context, views: RemoteViews, action: String, id: Int) {
-        Intent(context, MyWidgetMonthlyProvider::class.java).apply {
+        Intent(context, MyWidgetActionReceiver::class.java).apply {
             this.action = action
             val pendingIntent = PendingIntent.getBroadcast(context, 0, this, PendingIntent.FLAG_IMMUTABLE)
             views.setOnClickPendingIntent(id, pendingIntent)
@@ -70,26 +70,20 @@ class MyWidgetMonthlyProvider : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        when (intent.action) {
-            PREV -> getPrevMonth(context)
-            NEXT -> getNextMonth(context)
-            GO_TO_TODAY -> goToToday(context)
-            NEW_EVENT -> context.launchNewEventOrTaskActivity()
-            else -> super.onReceive(context, intent)
-        }
+        super.onReceive(context, intent)
     }
 
-    private fun getPrevMonth(context: Context) {
+    fun getPrevMonth(context: Context) {
         targetDate = targetDate!!.minusMonths(1)
         MonthlyCalendarImpl(monthlyCalendar, context).getMonth(targetDate!!)
     }
 
-    private fun getNextMonth(context: Context) {
+    fun getNextMonth(context: Context) {
         targetDate = targetDate!!.plusMonths(1)
         MonthlyCalendarImpl(monthlyCalendar, context).getMonth(targetDate!!)
     }
 
-    private fun goToToday(context: Context) {
+    fun goToToday(context: Context) {
         targetDate = DateTime.now().withDayOfMonth(1)
         MonthlyCalendarImpl(monthlyCalendar, context).getMonth(targetDate!!)
     }
